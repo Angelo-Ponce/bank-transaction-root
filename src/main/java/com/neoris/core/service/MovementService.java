@@ -4,12 +4,13 @@ import com.neoris.client.entity.MovementEntity;
 import com.neoris.client.repository.IMovementRepository;
 import com.neoris.client.service.IAccountService;
 import com.neoris.client.service.IMovementService;
+import com.neoris.client.exception.ModelNotFoundException;
 import com.neoris.vo.AccountVo;
 import com.neoris.vo.MovementReportVo;
 import com.neoris.vo.MovementVo;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class MovementService implements IMovementService {
 
     private final ModelMapper mapper;
@@ -37,7 +39,8 @@ public class MovementService implements IMovementService {
         // Obtener cuenta
         AccountVo accountVo = this.accountService.findById(movementVo.getAccountId());
         if (accountVo == null) {
-            throw new Exception("No existe cuenta");
+            log.error("No existe cuenta: " + movementVo.getAccountId());
+            throw new ModelNotFoundException("No existe cuenta: " + movementVo.getAccountId());
         }
 
         if (movementVo.getMovementValue().compareTo(BigDecimal.ZERO) > 0){
@@ -45,17 +48,12 @@ public class MovementService implements IMovementService {
         } else if(movementVo.getMovementValue().compareTo(BigDecimal.ZERO) < 0){
             if( accountVo.getInitialBalance().compareTo(BigDecimal.ZERO) == 0 ||
                     accountVo.getInitialBalance().compareTo(movementVo.getMovementValue()) < 0){
-                throw new Exception("Saldo insuficiente");
+                throw new ModelNotFoundException("Saldo no disponible");
             }
             movementVo.setMovementType("RETIRO");
-            // Actualizar el saldo inicial
-//            accountVo.setInitialBalance(accountVo.getInitialBalance().subtract(movementVo.getMovementValue()));
         } else {
-            throw new Exception("Movimiento no valido");
+            throw new ModelNotFoundException("Movimiento no valido");
         }
-
-        // TODO: Campos de auditoria para cuenta
-
         // Actualizar el saldo inicial
         accountVo.setInitialBalance(accountVo.getInitialBalance().add(movementVo.getMovementValue()));
         movementVo.setMovementDate(new Date());
@@ -79,7 +77,7 @@ public class MovementService implements IMovementService {
     public void update(MovementVo movementVo) throws Exception {
         MovementVo movement = this.findById(movementVo.getMovementId());
         if (movement == null) {
-            throw new Exception("Movimiento no existe");
+            throw new ModelNotFoundException("Movimiento no existe");
         }
         movement.setStatus(movementVo.getStatus());
         save(movementVo);
@@ -89,7 +87,7 @@ public class MovementService implements IMovementService {
     public void delete(Long id) throws Exception {
         MovementVo movementVo = this.findById(id);
         if (movementVo == null) {
-            throw new Exception("Movimiento no existe");
+            throw new ModelNotFoundException("Movimiento no existe");
         }
         movementVo.setStatus(Boolean.FALSE);
         this.save(movementVo);

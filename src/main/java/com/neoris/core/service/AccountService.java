@@ -50,7 +50,6 @@ public class AccountService implements IAccountService {
     public void delete(Long id) {
         AccountVo accountVo = this.findById(id);
         accountVo.setStatus(Boolean.FALSE);
-        // TODO: Campos de auditoria
         this.save(accountVo);
     }
 
