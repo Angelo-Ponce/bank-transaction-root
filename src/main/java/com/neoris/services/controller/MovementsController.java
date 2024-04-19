@@ -4,6 +4,7 @@ import com.neoris.client.service.IMovementService;
 import com.neoris.vo.BaseResponseVo;
 import com.neoris.vo.MovementReportVo;
 import com.neoris.vo.MovementVo;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class MovementsController {
     private final IMovementService movementService;
 
     @PostMapping
-    public ResponseEntity<BaseResponseVo> addMovement(@RequestBody MovementVo movementVo) throws Exception {
+    public ResponseEntity<BaseResponseVo> addMovement(@Valid @RequestBody MovementVo movementVo) throws Exception {
         this.movementService.saveMovement(movementVo);
         return ResponseEntity.ok(BaseResponseVo.builder().data(movementVo).build());
     }

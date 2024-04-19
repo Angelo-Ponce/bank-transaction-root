@@ -3,6 +3,7 @@ package com.neoris.services.controller;
 import com.neoris.core.service.AccountService;
 import com.neoris.vo.AccountVo;
 import com.neoris.vo.BaseResponseVo;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<BaseResponseVo> addClient(@RequestBody AccountVo accountVo) {
+    public ResponseEntity<BaseResponseVo> addClient(@Valid @RequestBody AccountVo accountVo) {
         this.accountService.save(accountVo);
         return ResponseEntity.ok(BaseResponseVo.builder().data(accountVo).build());
     }
@@ -26,7 +27,7 @@ public class AccountController {
     }
 
     @PutMapping
-    public ResponseEntity<BaseResponseVo> updateClient(@RequestBody AccountVo accountVo) {
+    public ResponseEntity<BaseResponseVo> updateAccoun(@RequestBody AccountVo accountVo) {
         this.accountService.update(accountVo);
         return ResponseEntity.ok(BaseResponseVo.builder().data(accountVo).build());
     }

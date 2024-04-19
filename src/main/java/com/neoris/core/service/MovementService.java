@@ -65,7 +65,6 @@ public class MovementService implements IMovementService {
 
     @Override
     public MovementVo findById(Long id) {
-        System.out.println("pruadnkcads");
         Optional<MovementEntity> movementEntity = this.repository.findById(id);
         if (movementEntity.isPresent()) {
             return this.mapper.map(movementEntity, MovementVo.class);

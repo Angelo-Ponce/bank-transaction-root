@@ -27,7 +27,7 @@ public class MovementEntity {
     @Column(name = "movement_date", nullable = false)
     private Date movementDate;
 
-    @Column(name = "movement_type", length = 150)
+    @Column(name = "movement_type", nullable = false, length = 150)
     private String movementType;
 
     @Column(name = "movement_value", nullable = false, precision = 10, scale = 2)
