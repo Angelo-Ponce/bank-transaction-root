@@ -79,7 +79,7 @@ public class MovementService implements IMovementService {
             throw new ModelNotFoundException("Movimiento no existe");
         }
         movement.setStatus(movementVo.getStatus());
-        save(movementVo);
+        save(movement);
     }
 
     @Override
